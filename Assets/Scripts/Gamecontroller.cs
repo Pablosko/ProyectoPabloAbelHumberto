@@ -63,7 +63,8 @@ public class Gamecontroller : MonoBehaviour
     {
         for (int i = 0; i < enemysToSpawn; i++)
         {
-            board.enemys.Add(Instantiate(enemy).GetComponent<EnemyScript>());
+            GameObject go = Instantiate(enemy);
+            board.enemys.Add(go.transform.GetChild(0).GetComponent<EnemyScript>());
         }
     }
    

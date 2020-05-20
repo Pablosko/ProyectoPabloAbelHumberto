@@ -9,6 +9,7 @@ public class EnemyScript : NpcScript
     public void Awake()
     {
         base.Awake();
+
     }
     public void Start()
     {
@@ -22,10 +23,7 @@ public class EnemyScript : NpcScript
     public void GenRandomTile()
     {
         currentTile = Gamecontroller.instance.board.GetRandomEnemyEmptyTile();
-            currentTile.currentNPC = this;
-            currentTile.currentNPC.transform.parent = currentTile.transform;
-            currentTile.currentNPC.transform.localPosition = Vector3.zero;
-
+        SwitchTile(currentTile);
         Gamecontroller.instance.board.enemys.Add(this);
     }
     public override void SelectTarget()

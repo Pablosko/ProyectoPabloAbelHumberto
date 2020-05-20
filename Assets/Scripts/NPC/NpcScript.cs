@@ -17,12 +17,16 @@ public class NpcScript : MonoBehaviour
     public List<Tile> previous = new List<Tile>();
     public Tile nextHex;
     public Tile startingTile;
+    public Transform mesh;
     public NpcHud hud;
     public bool centered;
     float nextAttackTimer;
+    public Animator anim;
     public void Awake()
     {
-        hud = transform.Find("Canvas").GetComponent<NpcHud>();
+        hud = transform.parent.Find("Canvas").GetComponent<NpcHud>();
+        mesh = transform.Find("Mesh");
+        anim = mesh.transform.Find("Prefab").GetComponent<Animator>();
         name = gameObject.name;
         hp = maxHp;
     }
@@ -30,6 +34,8 @@ public class NpcScript : MonoBehaviour
     {
         if (target != null)
         {
+            anim.SetBool("run",true);
+            anim.speed = 1;
             if (nextHex == null || path.Count == 1)
             {
                 FindFullPath();
@@ -43,13 +49,14 @@ public class NpcScript : MonoBehaviour
             {
                 centered = false;
                 Vector3 dir = nextHex.transform.position - transform.position;
+                mesh.transform.localRotation = Quaternion.Euler(0,Vector3.SignedAngle(transform.forward, dir.normalized,transform.up),0);
                 transform.Translate(dir.normalized * speed * Time.deltaTime * 1.5f);
                 //si esta cerca del hex busca otro
                 if (IsInNextHexRange(0.1f * speed, nextHex))
                 {
                     currentTile.nextNpc = null;
                     currentTile.currentNPC = null;
-                    transform.SetParent(nextHex.transform);
+                    transform.parent.SetParent(nextHex.transform);
                     currentTile = nextHex;
                     nextHex.currentNPC = this;
                     nextHex.nextNpc = null;
@@ -70,7 +77,8 @@ public class NpcScript : MonoBehaviour
                 if (!centered)
                 {
                    Vector3 dir = currentTile.transform.position - transform.position;
-                   transform.Translate(dir.normalized * speed * Time.deltaTime * 1.5f);
+                    mesh.transform.localRotation = Quaternion.Euler(0, Vector3.SignedAngle(transform.forward, dir.normalized, transform.up), 0);
+                    transform.Translate(dir.normalized * speed * Time.deltaTime * 1.5f);
                    if (IsInNextHexRange(0.3f * speed, currentTile))
                    {
                         centered = true;
@@ -80,7 +88,14 @@ public class NpcScript : MonoBehaviour
                 {
                     if (Vector3.Distance(transform.position,target.transform.position) <= range * 2 + 1f * speed)
                     {
+                        if (nextAttackTimer <= 0)
+                        {
+                            anim.SetTrigger("attack"); 
+                            anim.speed = attackSpeed;
+                        }
                         nextAttackTimer += Time.deltaTime;
+                        Vector3 dir = target.transform.position - transform.position;
+                        mesh.transform.localRotation = Quaternion.Euler(0, Vector3.SignedAngle(transform.forward, dir.normalized, transform.up), 0);
                         if (nextAttackTimer >= 1 / attackSpeed)
                         {
                             nextAttackTimer = 0;
@@ -94,9 +109,23 @@ public class NpcScript : MonoBehaviour
     public virtual void AutoAttack()
     {
         Debug.Log("AutoAtaque");
+        DealDmg();
+        
+    }
+    public void DealDmg()
+    {
         target.GetDmg(physicalDamage);
         if (target.hp <= 0)
         {
+            target.anim.SetTrigger("die");
+            AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
+            foreach (AnimationClip clip in clips)
+            {
+                if (clip.name == "Die")
+                {
+                     target.Invoke("die",clip.length);
+                }
+            }
             if (target.GetComponent<EnemyScript>() != null)
             {
                 target.GetComponent<EnemyScript>().Drop();
@@ -104,12 +133,15 @@ public class NpcScript : MonoBehaviour
             target.currentTile.currentNPC = null;
             Gamecontroller.instance.board.RemoveFromBoard(target);
             Gamecontroller.instance.board.CheckEndStage();
-            target.gameObject.SetActive(false);
             target = null;
             Gamecontroller.instance.board.checkTargets();
             previous = new List<Tile>();
             FindFullPath();
         }
+    }
+    public void die()
+    {
+        transform.parent.gameObject.SetActive(false);
     }
     public virtual void UseSkill()
     {
@@ -150,10 +182,10 @@ public class NpcScript : MonoBehaviour
         {
             tile.nextNpc = null;
             currentTile.currentNPC = null;
-            transform.SetParent(tile.transform);
+            transform.parent.SetParent(tile.transform);
             currentTile = tile;
             tile.currentNPC = this;
-            transform.localPosition = Vector3.zero;
+            transform.parent.localPosition = Vector3.zero;
         }
         else if (tile.currentNPC.GetComponent<EnemyScript>() != null)
         {
@@ -163,22 +195,25 @@ public class NpcScript : MonoBehaviour
         {
             //ponemos champ de su tile a la nuestra
             tile.currentNPC.currentTile = currentTile;
-            tile.currentNPC.transform.SetParent(currentTile.gameObject.transform);
-            tile.currentNPC.transform.localPosition = Vector3.zero;
+            tile.currentNPC.transform.parent.SetParent(currentTile.gameObject.transform);
+            tile.currentNPC.transform.parent.localPosition = Vector3.zero;
 
 
-            transform.SetParent(tile.gameObject.transform);
+            transform.parent.SetParent(tile.gameObject.transform);
             currentTile = tile;
             tile.currentNPC = this;
-            transform.localPosition = Vector3.zero;
+            transform.parent.localPosition = Vector3.zero;
         }
-        if (tile.type == TileType.bench)
+        if (GetComponent<Heroe>() != null)
         {
-            Gamecontroller.instance.synergieManager.RemoveHeroSynergies((Heroe)this);
-        }
-        if (tile.type == TileType.board)
-        {
-            Gamecontroller.instance.synergieManager.AddHeroSynergies((Heroe)this);
+            if (tile.type == TileType.bench)
+            {
+                Gamecontroller.instance.synergieManager.RemoveHeroSynergies((Heroe)this);
+            }
+            else if (tile.type == TileType.board)
+            {
+                Gamecontroller.instance.synergieManager.AddHeroSynergies((Heroe)this);
+            }
         }
     }
     public Tile GetNextHexPath(Tile pathtile)
@@ -276,6 +311,5 @@ public class NpcScript : MonoBehaviour
     {
         hp -= dmg;
         hud.UpdateBar(hp, maxHp);
-
-    }
+    }   
 }

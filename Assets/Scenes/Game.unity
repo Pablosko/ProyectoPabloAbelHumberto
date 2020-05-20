@@ -1096,6 +1096,8 @@ MonoBehaviour:
   bench: {fileID: 1403900481}
   ItemTigger: {fileID: 140774373}
   synergieManager: {fileID: 804478299}
+  gilipollasbugeao: {fileID: 1556040939566342, guid: c20397bf1592dc040b827e8716b0bd41,
+    type: 3}
 --- !u!114 &534669907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6099,7 +6101,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0.7535001}
-  m_AnchoredPosition: {x: 0.40863037, y: -0.8916321}
+  m_AnchoredPosition: {x: 0.40863037, y: -0.89164734}
   m_SizeDelta: {x: 0.1108551, y: -1.7232819}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2707437994841373492

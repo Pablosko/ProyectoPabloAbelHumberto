@@ -33,7 +33,7 @@ public class HeroPool : MonoBehaviour
             for (int i = 0; i < size; i++)
             {
                 tierList.Add(hero);
-                hero.GetComponent<Heroe>().GetSprite();
+                hero.transform.GetChild(0).GetComponent<Heroe>().GetSprite();
                 //print(hero.GetComponent<Heroe>().name);
             }
         }

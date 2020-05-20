@@ -27,19 +27,19 @@ public class Slot : MonoBehaviour
     }
     public void SetSlot()
     {
-        name.text = currentHero.GetComponent<Heroe>().name;
-        cost.text = "" + currentHero.GetComponent<Heroe>().tier;
-        image.sprite = currentHero.GetComponent<Heroe>().icon;
+        name.text = currentHero.transform.GetChild(0).GetComponent<Heroe>().name;
+        cost.text = "" + currentHero.transform.GetChild(0).GetComponent<Heroe>().tier;
+        image.sprite = currentHero.transform.GetChild(0).GetComponent<Heroe>().icon;
     }
 
     public void BuyHeroe()
     {
-        if (Gamecontroller.instance.player.HaveMoney((int)currentHero.GetComponent<Heroe>().tier + 1))
+        if (Gamecontroller.instance.player.HaveMoney((int)currentHero.transform.GetChild(0).GetComponent<Heroe>().tier + 1))
         {
             Tile tempTile = bench.GetEmptyTile();
-            Gamecontroller.instance.player.gold -= (int)currentHero.GetComponent<Heroe>().tier + 1;
+            Gamecontroller.instance.player.gold -= (int)currentHero.transform.GetChild(0).GetComponent<Heroe>().tier + 1;
             GameObject hero = Instantiate(currentHero, tempTile.transform);
-            tempTile.currentNPC = hero.GetComponent<Heroe>();
+            tempTile.currentNPC = hero.transform.GetChild(0).GetComponent<Heroe>();
             tempTile.currentNPC.currentTile = tempTile;
             hero.transform.localPosition = Vector3.zero;
             hero.transform.localScale = new Vector3(1, 1, 1);

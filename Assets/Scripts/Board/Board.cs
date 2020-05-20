@@ -176,10 +176,12 @@ public class Board : MonoBehaviour
     {
         if (enemys.Count == 0)
         {
+            SetHeroesToIdle();
             Gamecontroller.instance.stageController.state = State.End;
         }
         else if (heroes.Count == 0)
         {
+            SetHeroesToIdle();
             //repetir ronda
         }
     }
@@ -191,8 +193,7 @@ public class Board : MonoBehaviour
             heroe.currentTile.currentNPC = null;
             heroe.currentTile = heroe.startingTile;
             heroe.currentTile.currentNPC = heroe;
-            heroe.transform.SetParent(heroe.currentTile.transform);
-            heroe.transform.localPosition = Vector3.zero;
+            heroe.SwitchTile(heroe.currentTile);
         }
     }
     public void returnHeroeToBanquillo(Heroe hero)
@@ -254,6 +255,14 @@ public class Board : MonoBehaviour
 
             } else
                 npc.SelectTarget();
+        }
+    }
+    public void SetHeroesToIdle()
+    {
+        foreach (Heroe heroe in heroes)
+        {
+            heroe.anim.SetTrigger("idle");
+            heroe.anim.SetBool("run",false);
         }
     }
 
