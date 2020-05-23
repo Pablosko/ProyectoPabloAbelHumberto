@@ -189,7 +189,7 @@ public class Board : MonoBehaviour
     {
         foreach (Heroe heroe in heroes)
         {
-            heroe.hp = heroe.maxHp;
+            heroe.stats.hp = heroe.stats.maxHp;
             heroe.currentTile.currentNPC = null;
             heroe.currentTile = heroe.startingTile;
             heroe.currentTile.currentNPC = heroe;
@@ -248,7 +248,7 @@ public class Board : MonoBehaviour
         {
             if (npc.target != null)
             {
-                if (npc.target.hp <= 0)
+                if (npc.target.stats.hp.value <= 0)
                 {
                     npc.SelectTarget();
                 }

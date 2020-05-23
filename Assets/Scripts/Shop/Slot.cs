@@ -37,12 +37,14 @@ public class Slot : MonoBehaviour
         if (Gamecontroller.instance.player.HaveMoney((int)currentHero.transform.GetChild(0).GetComponent<Heroe>().tier + 1))
         {
             Tile tempTile = bench.GetEmptyTile();
-            Gamecontroller.instance.player.gold -= (int)currentHero.transform.GetChild(0).GetComponent<Heroe>().tier + 1;
+            Gamecontroller.instance.player.AddGold(-(int)currentHero.transform.GetChild(0).GetComponent<Heroe>().tier + 1);
             GameObject hero = Instantiate(currentHero, tempTile.transform);
             tempTile.currentNPC = hero.transform.GetChild(0).GetComponent<Heroe>();
+            Gamecontroller.instance.player.heroes.Add((Heroe)tempTile.currentNPC);
             tempTile.currentNPC.currentTile = tempTile;
             hero.transform.localPosition = Vector3.zero;
             hero.transform.localScale = new Vector3(1, 1, 1);
+            Gamecontroller.instance.player.checkForHeroeUpgrade();
         }
     }
 }

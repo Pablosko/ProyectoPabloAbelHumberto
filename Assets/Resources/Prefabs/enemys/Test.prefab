@@ -893,7 +893,7 @@ GameObject:
   - component: {fileID: 7728193442925383930}
   - component: {fileID: 8064894556540883675}
   m_Layer: 10
-  m_Name: Bar Gameobject
+  m_Name: BarGo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -906,7 +906,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2934086415356189433}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 2.41, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -1056,6 +1056,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5421395503217712129}
   - component: {fileID: 1812443176176554300}
+  - component: {fileID: 8998246955226277717}
   m_Layer: 13
   m_Name: Test
   m_TagString: Untagged
@@ -1090,30 +1091,58 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77e1310e41e80e2439be1f542a7490c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.6
-  physicalDamage: 1
-  magicDamge: 0
-  hp: 0
-  maxHp: 3
-  mana: 0
-  criticalDamage: 0
-  criticalRate: 0
-  physicalArmor: 0
-  magicalArmor: 0
-  dodge: 0
-  range: 1
-  attackSpeed: 0.6
-  currentTile: {fileID: 0}
   hexRange: 0
+  centered: 0
+  isInvecible: 0
+  mesh: {fileID: 0}
+  anim: {fileID: 0}
   target: {fileID: 0}
+  hud: {fileID: 0}
   path: []
   previous: []
   nextHex: {fileID: 0}
   startingTile: {fileID: 0}
-  mesh: {fileID: 0}
-  hud: {fileID: 0}
-  centered: 0
+  currentTile: {fileID: 0}
+  stats: {fileID: 0}
   drops: []
+--- !u!114 &8998246955226277717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5421395503217712137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a684378fbdbe1b84e927a86ed7abc07f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  physicalDamage:
+    basevalue: 1
+  hp:
+    basevalue: 5
+  speed:
+    basevalue: 2
+  magicDamge:
+    basevalue: 0
+  maxHp:
+    basevalue: 5
+  mana:
+    basevalue: 0
+  criticalDamage:
+    basevalue: 50
+  criticalRate:
+    basevalue: 25
+  physicalArmor:
+    basevalue: 0
+  magicalArmor:
+    basevalue: 0
+  dodge:
+    basevalue: 0
+  range:
+    basevalue: 1
+  attackSpeed:
+    basevalue: 0.7
 --- !u!1 &5440272100857230574
 GameObject:
   m_ObjectHideFlags: 0

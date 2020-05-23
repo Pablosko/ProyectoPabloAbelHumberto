@@ -36,8 +36,7 @@ public class Shop : MonoBehaviour
     {
         if (Gamecontroller.instance.player.HaveMoney(rollPrice))
         {
-            Gamecontroller.instance.player.gold -= 2;
-            Gamecontroller.instance.hud.UpdateText();
+            Gamecontroller.instance.player.AddGold(-2);
             foreach (Slot slot in slots)
             {
                 int number = Random.Range(0, 100);

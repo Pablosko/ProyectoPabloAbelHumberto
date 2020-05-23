@@ -3,38 +3,46 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-
+public delegate void NpcEvent(NpcScript target);
 public class NpcScript : MonoBehaviour
 {
     //error en movimiento si es la primera vez y ataca ????;
     //si el optimo no tiene final que cambie a uno nuevo
-    public float speed, physicalDamage, magicDamge, hp, maxHp, mana, criticalDamage, criticalRate, physicalArmor, magicalArmor, dodge, range, attackSpeed;
+    
     const float hexDistance = 2.4f;
-    public Tile currentTile;
+    float nextAttackTimer;
     public int hexRange;
+    public bool centered;
+    public bool isInvecible;
+    public Transform mesh;
+    public Animator anim;
     public NpcScript target;
+    public NpcHud hud;
     public List<Tile> path = new List<Tile>();
     public List<Tile> previous = new List<Tile>();
     public Tile nextHex;
     public Tile startingTile;
-    public Transform mesh;
-    public NpcHud hud;
-    public bool centered;
-    float nextAttackTimer;
-    public Animator anim;
+    public Tile currentTile;
+    public NpcStats stats;
+    public List<NpcEvent> onHitEvents = new List<NpcEvent>();
+    public List<NpcEvent> onKillEvents = new List<NpcEvent>();
+    public List<NpcEvent> onGetHitEvents = new List<NpcEvent>();
+    public List<NpcEvent> onCastEvents = new List<NpcEvent>();
+    public List<NpcEvent> onSpellHitEvents = new List<NpcEvent>();
     public void Awake()
     {
+        stats = GetComponent<NpcStats>();
         hud = transform.parent.Find("Canvas").GetComponent<NpcHud>();
         mesh = transform.Find("Mesh");
         anim = mesh.transform.Find("Prefab").GetComponent<Animator>();
         name = gameObject.name;
-        hp = maxHp;
+        
     }
     public void Update()
     {
         if (target != null)
         {
-            anim.SetBool("run",true);
+            anim.SetBool("run", true);
             anim.speed = 1;
             if (nextHex == null || path.Count == 1)
             {
@@ -49,10 +57,10 @@ public class NpcScript : MonoBehaviour
             {
                 centered = false;
                 Vector3 dir = nextHex.transform.position - transform.position;
-                mesh.transform.localRotation = Quaternion.Euler(0,Vector3.SignedAngle(transform.forward, dir.normalized,transform.up),0);
-                transform.Translate(dir.normalized * speed * Time.deltaTime * 1.5f);
+                mesh.transform.localRotation = Quaternion.Euler(0, Vector3.SignedAngle(transform.forward, dir.normalized, transform.up), 0);
+                transform.Translate(dir.normalized * stats.speed.value * Time.deltaTime * 1.5f);
                 //si esta cerca del hex busca otro
-                if (IsInNextHexRange(0.1f * speed, nextHex))
+                if (IsInNextHexRange(0.1f * stats.speed.value, nextHex))
                 {
                     currentTile.nextNpc = null;
                     currentTile.currentNPC = null;
@@ -76,27 +84,27 @@ public class NpcScript : MonoBehaviour
                 //go to center
                 if (!centered)
                 {
-                   Vector3 dir = currentTile.transform.position - transform.position;
+                    Vector3 dir = currentTile.transform.position - transform.position;
                     mesh.transform.localRotation = Quaternion.Euler(0, Vector3.SignedAngle(transform.forward, dir.normalized, transform.up), 0);
-                    transform.Translate(dir.normalized * speed * Time.deltaTime * 1.5f);
-                   if (IsInNextHexRange(0.3f * speed, currentTile))
-                   {
+                    transform.Translate(dir.normalized * stats.speed.value * Time.deltaTime * 1.5f);
+                    if (IsInNextHexRange(0.3f * stats.speed.value, currentTile))
+                    {
                         centered = true;
-                   }
+                    }
                 }
                 else
                 {
-                    if (Vector3.Distance(transform.position,target.transform.position) <= range * 2 + 1f * speed)
+                    if (Vector3.Distance(transform.position, target.transform.position) <= stats.range.value * 2 + 1f * stats.speed.value)
                     {
                         if (nextAttackTimer <= 0)
                         {
-                            anim.SetTrigger("attack"); 
-                            anim.speed = attackSpeed;
+                            anim.SetTrigger("attack");
+                            anim.speed = stats.attackSpeed.value;
                         }
                         nextAttackTimer += Time.deltaTime;
                         Vector3 dir = target.transform.position - transform.position;
                         mesh.transform.localRotation = Quaternion.Euler(0, Vector3.SignedAngle(transform.forward, dir.normalized, transform.up), 0);
-                        if (nextAttackTimer >= 1 / attackSpeed)
+                        if (nextAttackTimer >= 1 / stats.attackSpeed.value)
                         {
                             nextAttackTimer = 0;
                             AutoAttack();
@@ -109,21 +117,26 @@ public class NpcScript : MonoBehaviour
     public virtual void AutoAttack()
     {
         Debug.Log("AutoAtaque");
+        foreach (NpcEvent func in onHitEvents)
+        {
+            func(target);
+        }
         DealDmg();
-        
+
     }
     public void DealDmg()
     {
-        target.GetDmg(physicalDamage);
-        if (target.hp <= 0)
+        target.GetDmg(stats.physicalDamage.value);
+        if (target.stats.hp.value <= 0)
         {
+            target.hud.bar.gameObject.SetActive(false);
             target.anim.SetTrigger("die");
             AnimationClip[] clips = anim.runtimeAnimatorController.animationClips;
             foreach (AnimationClip clip in clips)
             {
                 if (clip.name == "Die")
                 {
-                     target.Invoke("die",clip.length);
+                    target.Invoke("die", clip.length);
                 }
             }
             if (target.GetComponent<EnemyScript>() != null)
@@ -141,6 +154,9 @@ public class NpcScript : MonoBehaviour
     }
     public void die()
     {
+        if (GetComponent<EnemyScript>() != null)
+            Destroy(transform.parent.gameObject);
+
         transform.parent.gameObject.SetActive(false);
     }
     public virtual void UseSkill()
@@ -161,7 +177,7 @@ public class NpcScript : MonoBehaviour
     }
     public bool TargetInRange()
     {
-        return Vector3.Distance(target.currentTile.transform.position, currentTile.transform.position) <= range * 2f;
+        return Vector3.Distance(target.currentTile.transform.position, currentTile.transform.position) <= stats.range.value * 2f;
     }
     public bool IsInNextHexRange(float minRange, Tile hex)
     {
@@ -309,7 +325,11 @@ public class NpcScript : MonoBehaviour
     }
     public void GetDmg(float dmg)
     {
-        hp -= dmg;
-        hud.UpdateBar(hp, maxHp);
-    }   
+        if (!isInvecible)
+        {
+            stats.hp.value -= dmg;
+            hud.UpdateBar(stats.hp.value, stats.maxHp.value);
+        }
+    }
+   
 }
