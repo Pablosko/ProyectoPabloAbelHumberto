@@ -18,12 +18,12 @@ public class CamMixPrueba : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.LeftArrow))
+        if(Input.GetKeyDown(KeyCode.A))
         {
             AddValue(-1);
             mixer.blendCamera(cameras[value], 1, Interpolators.bounceInOut);
         }
-        if (Input.GetKeyDown(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.S))
         {
             AddValue(-1);
             AddValue(-1);
@@ -31,13 +31,13 @@ public class CamMixPrueba : MonoBehaviour
             mixer.blendCamera(cameras[value], 1, Interpolators.circularIn);
         }
 
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        if (Input.GetKeyDown(KeyCode.D))
         {
             AddValue(1);
 
             mixer.blendCamera(cameras[value], 1, Interpolators.expoIn);
         }
-        if (Input.GetKeyDown(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.W))
         {
             AddValue(1);
             AddValue(1);

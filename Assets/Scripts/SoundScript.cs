@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class SoundScript : MonoBehaviour
 {
@@ -64,15 +65,12 @@ public class SoundScript : MonoBehaviour
     AudioClip HabilityEffectClip;
     [SerializeField]
     AudioSource HabilityEffect;
+    [Header("AudioMixer")]
+    [SerializeField]
+    AudioMixer audioMixer;
 
     // Start is called before the first frame update
     void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
     {
         SetAudio(AmbientalMusicMenuClip, AmbientalMusicMenu, true);
         SetAudio(AmbientalMusicInGameClip, AmbientalMusicInGame, true);
@@ -89,9 +87,14 @@ public class SoundScript : MonoBehaviour
         SetAudio(DeadEffectClip, DeadEffect, false);
         SetAudio(HabilityEffectClip, HabilityEffect, false);
         PlayAudio(AmbientalMusicMenu);
-        PlayAudio(AmbientalMusicInGame);
-        PlayAudio(AmbientalEffectInGame);
     }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
     void SetAudio(AudioClip aC, AudioSource aS, bool isLoop)
     {
         aS.clip = aC;
@@ -100,8 +103,18 @@ public class SoundScript : MonoBehaviour
             aS.loop = true;
         }
     }
+
     public void PlayAudio(AudioSource aS)
     {
         aS.Play();
+    }
+    public void SetVolumeMaster(float volume)
+    {
+        audioMixer.SetFloat("", volume);
+    }
+    public void PlayInGame()
+    {
+        AmbientalMusicMenu.Stop();
+        PlayAudio(AmbientalMusicInGame);
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    public GameObject tempAudio;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,17 +20,18 @@ public class MainMenu : MonoBehaviour
     public void PlayGame()
     {
         SceneManager.LoadScene("Game");
+        DontDestroyOnLoad(tempAudio);
     }
 
-     //game.columVelocity = game.tempColumVelocity;
-     //game.metros = 0;
-     //game.currentTime = 0.0f;
-     //player.isAlive = true;
-     //player.isMeta = false;
-     //player.imagePlayer.sprite.name = player.nameGeo[Random.Range(0, 4)];
-     //player.SetGeometry();
+//game.columVelocity = game.tempColumVelocity;
+//game.metros = 0;
+//game.currentTime = 0.0f;
+//player.isAlive = true;
+//player.isMeta = false;
+//player.imagePlayer.sprite.name = player.nameGeo[Random.Range(0, 4)];
+//player.SetGeometry();
 
-    public void QuitGame()
+public void QuitGame()
     {
         Debug.Log("QUIT!");
         Application.Quit();

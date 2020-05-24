@@ -91,4 +91,11 @@ public class Utils: MonoBehaviour
         Destroy(heroes[1].transform.parent.gameObject);
         Destroy(heroes[0].transform.parent.gameObject);
     }
+    public static int BoolToInt(bool bol)
+    {
+        if (bol)
+            return 1;
+        else
+            return 0;
+    }
 }

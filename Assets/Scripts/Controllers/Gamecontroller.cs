@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Gamecontroller : MonoBehaviour
 {
     public static Gamecontroller instance;
+    public GameObject pauseMenu;
+    public GameObject shopContainer;
     public int[] tierProbs = new int[5];
     public HeroPool pool;
     public Shop shop;
@@ -19,6 +19,7 @@ public class Gamecontroller : MonoBehaviour
     public Bench bench;
     public GameObject ItemTigger;
     public SynergieManager synergieManager;
+    public SoundScript audiocontroller;
     void Awake()
     {
         instance = this;
@@ -27,73 +28,82 @@ public class Gamecontroller : MonoBehaviour
     {
         enemy = Resources.Load<GameObject>("Prefabs/enemys/Test");
         GenEnemies();
+        audiocontroller = GameObject.Find("TempAudio").GetComponent<SoundScript>();
+        audiocontroller.PlayInGame();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            print("roll");
-            shop.Roll();
+            ClosePauseMenu();
         }
-        if (Input.GetKeyDown(KeyCode.D) && (stageController.state == State.Start))
+        if (Time.timeScale != 0)
         {
-            print("mete");
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            var hits = Physics.RaycastAll(ray, 100);
-            foreach (RaycastHit hit in hits)
+            if (Input.GetKeyDown(KeyCode.Q))
             {
-                if (hit.transform.gameObject.layer == 10)
+                print("roll");
+                shop.Roll();
+            }
+            if (Input.GetKeyDown(KeyCode.D) && (stageController.state == State.Start))
+            {
+                print("mete");
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                var hits = Physics.RaycastAll(ray, 100);
+                foreach (RaycastHit hit in hits)
                 {
-                    Heroe heroe = hit.transform.parent.GetComponent<Heroe>();
-                    if (heroe.currentTile.type == TileType.bench)
+                    if (hit.transform.gameObject.layer == 10)
                     {
-                        heroe.PutIntoBoard();
-                    }
-                    else
-                    {
-                        heroe.RemoveFromBoard();
+                        Heroe heroe = hit.transform.parent.GetComponent<Heroe>();
+                        if (heroe.currentTile.type == TileType.bench)
+                        {
+                            heroe.PutIntoBoard();
+                        }
+                        else
+                        {
+                            heroe.RemoveFromBoard();
+                        }
                     }
                 }
             }
-        }
-        if (Input.GetMouseButtonDown(0))
-        {
+            if (Input.GetMouseButtonDown(0))
+            {
 
-        }
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            var hits = Physics.RaycastAll(ray, 100);
-            foreach (RaycastHit hit in hits)
+            }
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                if (hit.transform.parent.GetComponent<Heroe>() != null)
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                var hits = Physics.RaycastAll(ray, 100);
+                foreach (RaycastHit hit in hits)
                 {
-                    Destroy(hit.transform.parent.parent.gameObject);
-                    board.RemoveFromBoard(hit.transform.parent.GetComponent<Heroe>());
-                    player.AddGold(hit.transform.parent.GetComponent<Heroe>().stars * (int)hit.transform.parent.GetComponent<Heroe>().tier);
+                    if (hit.transform.parent.GetComponent<Heroe>() != null)
+                    {
+                        Destroy(hit.transform.parent.parent.gameObject);
+                        board.RemoveFromBoard(hit.transform.parent.GetComponent<Heroe>());
+                        player.AddGold(hit.transform.parent.GetComponent<Heroe>().stars * (int)hit.transform.parent.GetComponent<Heroe>().tier);
+                    }
                 }
             }
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-            bool activado = false;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            var hits = Physics.RaycastAll(ray, 100);
-            foreach (RaycastHit hit in hits)
+            if (Input.GetMouseButtonDown(1))
             {
-                if (hit.transform.parent.GetComponent<Heroe>() != null)
+                bool activado = false;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                var hits = Physics.RaycastAll(ray, 100);
+                foreach (RaycastHit hit in hits)
                 {
-                    activado = true;
-                    hit.transform.parent.GetComponent<Heroe>().hud.ActivateStatsHud(!hit.transform.parent.GetComponent<Heroe>().hud.GetComponent<HeroeHud>().heroeInfo.activeSelf);
+                    if (hit.transform.parent.GetComponent<Heroe>() != null)
+                    {
+                        activado = true;
+                        hit.transform.parent.GetComponent<Heroe>().hud.ActivateStatsHud(!hit.transform.parent.GetComponent<Heroe>().hud.GetComponent<HeroeHud>().heroeInfo.activeSelf);
+                    }
                 }
-            }
-            if (!activado)
-            {
-                foreach (Heroe heroe in player.heroes)
+                if (!activado)
                 {
-                    heroe.hud.ActivateStatsHud(false);
+                    foreach (Heroe heroe in player.heroes)
+                    {
+                        heroe.hud.ActivateStatsHud(false);
+                    }
                 }
             }
         }
@@ -129,5 +139,16 @@ public class Gamecontroller : MonoBehaviour
                 }
             }
         }
+    }
+    public void ClosePauseMenu()
+    {
+        Time.timeScale = Utils.BoolToInt(pauseMenu.gameObject.activeSelf);
+        pauseMenu.SetActive(!pauseMenu.gameObject.activeSelf);
+        shopContainer.gameObject.SetActive(!pauseMenu.gameObject.activeSelf);
+    }
+
+    public void ExitToMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }

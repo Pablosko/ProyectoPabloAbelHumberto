@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class OptionsMenu : MonoBehaviour
 {
-
     [SerializeField]
     AudioMixer audioMixer;
 

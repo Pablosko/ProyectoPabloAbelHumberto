@@ -62,10 +62,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Downloads\Characters\TAZO_3D_C\DemoScene\Action_Manage.cs" />
-    <Compile Include="Assets\Downloads\Characters\TAZO_3D_C\DemoScene\demo.cs" />
-    <Compile Include="Assets\Interpolators\InterpolateThroughPoints.cs" />
-    <Compile Include="Assets\Interpolators\Interpolators.cs" />
     <Compile Include="Assets\Scripts\AddToInventory.cs" />
     <Compile Include="Assets\Scripts\Bench\Bench.cs" />
     <Compile Include="Assets\Scripts\Bench\BenchTile.cs" />
@@ -75,6 +71,8 @@
     <Compile Include="Assets\Scripts\Cam\CamMixPrueba.cs" />
     <Compile Include="Assets\Scripts\Controllers\Gamecontroller.cs" />
     <Compile Include="Assets\Scripts\Controllers\StageController.cs" />
+    <Compile Include="Assets\Scripts\Interpolators\InterpolateThroughPoints.cs" />
+    <Compile Include="Assets\Scripts\Interpolators\Interpolators.cs" />
     <Compile Include="Assets\Scripts\NPC\EnemyScript.cs" />
     <Compile Include="Assets\Scripts\NPC\FireSynergie.cs" />
     <Compile Include="Assets\Scripts\NPC\Hero\DragHero.cs" />
