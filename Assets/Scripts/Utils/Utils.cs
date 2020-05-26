@@ -15,7 +15,6 @@ public class Stat
     public float basevalue;
     [System.NonSerialized]
     public List<ExtraStat> extraValues = new List<ExtraStat>();
-
     public float GetExtraValues()
     {
         float total = 0;
@@ -46,6 +45,8 @@ public class Utils: MonoBehaviour
 
         for (int i = 1; i < 4; i++)
         {
+          
+          
             List<Heroe> sameStar = new List<Heroe>(); 
             foreach (Heroe heroe in heroes)
             {
@@ -91,11 +92,40 @@ public class Utils: MonoBehaviour
         Destroy(heroes[1].transform.parent.gameObject);
         Destroy(heroes[0].transform.parent.gameObject);
     }
+    public static string GetFirstChars(string sentence,int cuantity)
+    {
+        string newString = "";
+        for (int i = 0; i < cuantity; i++)
+        {
+            newString += sentence[i];
+        }
+        return newString;
+    }
     public static int BoolToInt(bool bol)
     {
         if (bol)
             return 1;
         else
             return 0;
+    }
+    public static void yiselChild()
+    {
+        GameObject yisel = null;
+        while (true != false)
+        {
+            yisel.transform.GetChild(0);
+        }
+    }
+    public static void PlayAudio(AudioClip aC, AudioSource aS, bool isLoop)
+    {
+        aS.clip = aC;
+        aS.loop = isLoop;
+        aS.Play();
+    }
+    public static void PlayRandomAudio(List<AudioClip> aC, AudioSource aS, bool isLoop)
+    {
+        aS.clip = aC[Random.Range(0,aC.Count)];
+        aS.loop = isLoop;
+        aS.Play();
     }
 }

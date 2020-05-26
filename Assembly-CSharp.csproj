@@ -62,6 +62,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\ButtonClick.cs" />
     <Compile Include="Assets\Scripts\AddToInventory.cs" />
     <Compile Include="Assets\Scripts\Bench\Bench.cs" />
     <Compile Include="Assets\Scripts\Bench\BenchTile.cs" />

@@ -10,12 +10,14 @@ public class Shop : MonoBehaviour
     public Color[] tierColors;
     public int rollPrice;
     public int levelUpPrice;
+    public AudioSource audioSource;
     public Text rollPriceText;
     public Text levelUpPriceText;
     public Image expBar;
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         rollPriceText.text = rollPrice.ToString();
         levelUpPriceText.text = levelUpPrice.ToString();       
         foreach (Transform child in transform)
@@ -36,6 +38,7 @@ public class Shop : MonoBehaviour
     {
         if (Gamecontroller.instance.player.HaveMoney(rollPrice))
         {
+            Utils.PlayRandomAudio(SoundScript.instance.RollEffectsClips,audioSource,false);
             Gamecontroller.instance.player.AddGold(-2);
             foreach (Slot slot in slots)
             {

@@ -17,6 +17,7 @@ public class Heroe : NpcScript
     public int stars = 1;
     public Sprite icon;
     public Rarity tier;
+    public AudioClip lvlUpClip;
     public string name;
     public float level;
     public float totalExp;
@@ -28,6 +29,7 @@ public class Heroe : NpcScript
     public void Awake()
     {
         base.Awake();
+        lvlUpClip = Resources.Load<AudioClip>("Audio/Npc/" + Utils.GetFirstChars(GetType().ToString(), 5) + "/" + gameObject.name + "/" + gameObject.name + "_lvlUp");
         hud = transform.parent.Find("Canvas").GetComponent<HeroeHud>();
     }
 
@@ -75,5 +77,9 @@ public class Heroe : NpcScript
     public void RemoveFromBoard()
     {
         SwitchTile(Gamecontroller.instance.bench.GetEmptyTile());
+    }
+    public void LevelUp()
+    {
+        Utils.PlayAudio(lvlUpClip, audioSource, false);
     }
 }

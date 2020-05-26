@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
 public class Gamecontroller : MonoBehaviour
 {
     public static Gamecontroller instance;
+    [SerializeField ]
+    public SoundScript audioController;
     public GameObject pauseMenu;
     public GameObject shopContainer;
     public int[] tierProbs = new int[5];
@@ -15,21 +19,22 @@ public class Gamecontroller : MonoBehaviour
     public Player player;
     public HudController hud;
     public StageController stageController;
-    GameObject enemy;
+    List<GameObject> enemys = new List<GameObject>();
     public Bench bench;
     public GameObject ItemTigger;
     public SynergieManager synergieManager;
-    public SoundScript audiocontroller;
+    public AudioSource audioSource;
     void Awake()
     {
         instance = this;
     }
     void Start()
     {
-        enemy = Resources.Load<GameObject>("Prefabs/enemys/Test");
+        audioController = SoundScript.instance;
+        enemys.AddRange(Resources.LoadAll<GameObject>("Prefabs/enemys"));
         GenEnemies();
-        audiocontroller = GameObject.Find("TempAudio").GetComponent<SoundScript>();
-        audiocontroller.PlayInGame();
+        
+        SoundScript.instance.PlayMusic(true);
     }
 
     // Update is called once per frame
@@ -79,6 +84,7 @@ public class Gamecontroller : MonoBehaviour
                 {
                     if (hit.transform.parent.GetComponent<Heroe>() != null)
                     {
+                        Utils.PlayAudio(SoundScript.instance.SellHeroEffectClip, audioSource, false);
                         Destroy(hit.transform.parent.parent.gameObject);
                         board.RemoveFromBoard(hit.transform.parent.GetComponent<Heroe>());
                         player.AddGold(hit.transform.parent.GetComponent<Heroe>().stars * (int)hit.transform.parent.GetComponent<Heroe>().tier);
@@ -112,7 +118,7 @@ public class Gamecontroller : MonoBehaviour
     {
         for (int i = 0; i < enemysToSpawn; i++)
         {
-            GameObject go = Instantiate(enemy);
+            GameObject go = Instantiate(enemys[Random.Range(0,enemys.Count)]);
             board.enemys.Add(go.transform.GetChild(0).GetComponent<EnemyScript>());
         }
     }

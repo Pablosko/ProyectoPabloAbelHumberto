@@ -5,116 +5,82 @@ using UnityEngine.Audio;
 
 public class SoundScript : MonoBehaviour
 {
+    public static SoundScript instance;
     [SerializeField]
-    AudioClip AmbientalMusicMenuClip;
+    public List<AudioClip> AmbientalMusicClips = new List<AudioClip>();
     [SerializeField]
-    AudioSource AmbientalMusicMenu;
+    public List<AudioClip> AmbientalEffectsClips = new List<AudioClip>();
     [SerializeField]
-    AudioClip AmbientalMusicInGameClip;
+    public AudioClip LevelUpPlayerEffectClip;
     [SerializeField]
-    AudioSource AmbientalMusicInGame;
+    public AudioClip HitButtonEffectClip;
     [SerializeField]
-    AudioClip AmbientalEffectInGameClip;
+    public List<AudioClip> RollEffectsClips = new List<AudioClip>();
     [SerializeField]
-    AudioSource AmbientalEffectInGame;
+    public AudioClip BuyHeroEffectClip;
     [SerializeField]
-    AudioClip LevelUpPlayerEffectClip;
+    public AudioClip DropHeroEffectClip;
     [SerializeField]
-    AudioSource LevelUpPlayerEffect;
+    public AudioClip SellHeroEffectClip;
     [SerializeField]
-    AudioClip HitButtonEffectClip;
-    [SerializeField]
-    AudioSource HitButtonEffect;
-    [SerializeField]
-    AudioClip RollEffectClip;
-    [SerializeField]
-    AudioSource RollEffect;
-    [SerializeField]
-    AudioClip BuyHeroEffectClip;
-    [SerializeField]
-    AudioSource BuyHeroEffect;
-    [SerializeField]
-    AudioClip SellHeroEffectClip;
-    [SerializeField]
-    AudioSource SellHeroEffect;
-    [SerializeField]
-    AudioClip TakeHeroEffectClip;
-    [SerializeField]
-    AudioSource TakeHeroEffect;
-    [SerializeField]
-    AudioClip DropHeroEffectClip;
-    [SerializeField]
-    AudioSource DropHeroEffect;
-    [SerializeField]
-    AudioClip LevelUpHeroEffectClip;
-    [SerializeField]
-    AudioSource LevelUpHeroEffect;
-    [SerializeField]
-    AudioClip TierUpHeroEffectClip;
-    [SerializeField]
-    AudioSource TierUpHeroEffect;
-    [SerializeField]
-    AudioClip HitEffectClip;
-    [SerializeField]
-    AudioSource HitEffect;
-    [SerializeField]
-    AudioClip DeadEffectClip;
-    [SerializeField]
-    AudioSource DeadEffect;
-    [SerializeField]
-    AudioClip HabilityEffectClip;
-    [SerializeField]
-    AudioSource HabilityEffect;
     [Header("AudioMixer")]
-    [SerializeField]
-    AudioMixer audioMixer;
+    public AudioMixer audioMixer;
 
-    // Start is called before the first frame update
+    public AudioSource music;
+    public AudioSource effect;
+    public AudioSource ui;
+
     void Start()
     {
-        SetAudio(AmbientalMusicMenuClip, AmbientalMusicMenu, true);
-        SetAudio(AmbientalMusicInGameClip, AmbientalMusicInGame, true);
-        SetAudio(AmbientalEffectInGameClip, AmbientalEffectInGame, true);
-        SetAudio(LevelUpPlayerEffectClip, LevelUpPlayerEffect, false);
-        SetAudio(HitButtonEffectClip, HitButtonEffect, false);
-        SetAudio(BuyHeroEffectClip, BuyHeroEffect, false);
-        SetAudio(SellHeroEffectClip, SellHeroEffect, false);
-        SetAudio(TakeHeroEffectClip, TakeHeroEffect, false);
-        SetAudio(DropHeroEffectClip, DropHeroEffect, false);
-        SetAudio(LevelUpHeroEffectClip, LevelUpHeroEffect, false);
-        SetAudio(TierUpHeroEffectClip, TierUpHeroEffect, false);
-        SetAudio(HitEffectClip, HitEffect, false);
-        SetAudio(DeadEffectClip, DeadEffect, false);
-        SetAudio(HabilityEffectClip, HabilityEffect, false);
-        PlayAudio(AmbientalMusicMenu);
+        instance = this;
+        AmbientalMusicClips.AddRange(Resources.LoadAll<AudioClip>("Audios/Ambiental/Music"));
+        AmbientalEffectsClips.AddRange(Resources.LoadAll<AudioClip>("Audios/Ambiental/Effects"));
+        LevelUpPlayerEffectClip = Resources.Load<AudioClip>("Audios/Effects/Game/LevelUpPlayer");
+        RollEffectsClips.AddRange(Resources.LoadAll<AudioClip>("Audios/Effects/Game/Roll"));
+        HitButtonEffectClip = Resources.Load<AudioClip>("Audios/Effects/UI/HitButton");
+        SellHeroEffectClip = Resources.Load<AudioClip>("Audios/Effects/Game/SellHero");
+        BuyHeroEffectClip = Resources.Load<AudioClip>("Audios/Effects/Game/BuyHero");
+        DropHeroEffectClip = Resources.Load<AudioClip>("Audios/Effects/Game/DropHero");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-    void SetAudio(AudioClip aC, AudioSource aS, bool isLoop)
-    {
-        aS.clip = aC;
-        if (isLoop)
-        {
-            aS.loop = true;
-        }
-    }
-
-    public void PlayAudio(AudioSource aS)
-    {
-        aS.Play();
-    }
     public void SetVolumeMaster(float volume)
     {
-        audioMixer.SetFloat("", volume);
+        audioMixer.SetFloat("VolumeMaster", volume);
     }
-    public void PlayInGame()
+    public void SetVolumeEffects(float volume)
     {
-        AmbientalMusicMenu.Stop();
-        PlayAudio(AmbientalMusicInGame);
+        audioMixer.SetFloat("VolumeEffects", volume);
+    }
+    public void SetVolumeAmbiental(float volume)
+    {
+        audioMixer.SetFloat("VolumeAmbiental", volume);
+    }
+    public void SetVolumeEffectsUI(float volume)
+    {
+        audioMixer.SetFloat("VolumeEffectsUI", volume);
+    }
+    public void SetVolumeEffectsInGame(float volume)
+    {
+        audioMixer.SetFloat("VolumeEffectsInGame", volume);
+    }
+    public void SetVolumeAmbientalEffects(float volume)
+    {
+        audioMixer.SetFloat("VolumeAmbientalEffects", volume);
+    }
+    public void SetVolumeAmbientalMusic(float volume)
+    {
+        audioMixer.SetFloat("VolumeAmbientalMusic", volume);
+    }
+    public void PlayMusic(bool state)
+    {
+        music.clip = AmbientalMusicClips[Random.Range(0, AmbientalEffectsClips.Count)];
+        music.Play();
+        if (!state)
+            music.Stop();
+    }
+    public void PlayRandomEffects()
+    {
+        music.clip = AmbientalEffectsClips[Random.Range(0, AmbientalEffectsClips.Count)];
+        music.Play();
     }
 }

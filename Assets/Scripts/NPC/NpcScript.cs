@@ -15,6 +15,9 @@ public class NpcScript : MonoBehaviour
     public bool centered;
     public bool isInvecible;
     public Transform mesh;
+    public AudioSource audioSource;
+    public AudioClip dieClip;
+    public AudioClip hitClip;
     public Animator anim;
     public NpcScript target;
     public NpcHud hud;
@@ -36,7 +39,11 @@ public class NpcScript : MonoBehaviour
         mesh = transform.Find("Mesh");
         anim = mesh.transform.Find("Prefab").GetComponent<Animator>();
         name = gameObject.name;
+        audioSource = GetComponent<AudioSource>();
         
+        dieClip = Resources.Load<AudioClip>("Audio/Npc/"+Utils.GetFirstChars(GetType().ToString(),5) +"/"+gameObject.name+ "/"+gameObject.name+"_die");
+        hitClip = Resources.Load<AudioClip>("Audio/Npc/" + Utils.GetFirstChars(GetType().ToString(),5) +"/"+gameObject.name+ "/"+gameObject.name+"_hit");
+
     }
     public void Update()
     {
@@ -117,6 +124,7 @@ public class NpcScript : MonoBehaviour
     public virtual void AutoAttack()
     {
         Debug.Log("AutoAtaque");
+        Utils.PlayAudio(hitClip, audioSource, false);
         foreach (NpcEvent func in onHitEvents)
         {
             func(target);
@@ -152,8 +160,10 @@ public class NpcScript : MonoBehaviour
             FindFullPath();
         }
     }
-    public void die()
+    public void Die()
     {
+        Utils.PlayAudio(dieClip, audioSource, false);
+
         if (GetComponent<EnemyScript>() != null)
             Destroy(transform.parent.gameObject);
 
