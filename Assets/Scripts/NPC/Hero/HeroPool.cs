@@ -6,7 +6,7 @@ public class HeroPool : MonoBehaviour
 {
     public int[] quantity = new int[5];
     public List<List<GameObject>> heroes = new List<List<GameObject>>();
-    void Start()
+    void Awake()
     {
         GeneratePool();
     }

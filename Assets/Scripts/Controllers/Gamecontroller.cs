@@ -2,13 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.UI;
+public enum GameState
+{
+    Gameplaying,
+    Menu
+}
 public class Gamecontroller : MonoBehaviour
 {
     public static Gamecontroller instance;
-    [SerializeField ]
-    public SoundScript audioController;
-    public GameObject pauseMenu;
+    [SerializeField]
+    GameState gamestate;
+    public GameObject gameGo;
+    public GameObject menuGo;
+    public GameObject menuGoNoCanvas;
+    public GameObject canvas;
+    public MainMenu menuScript;
     public GameObject shopContainer;
     public int[] tierProbs = new int[5];
     public HeroPool pool;
@@ -24,17 +33,16 @@ public class Gamecontroller : MonoBehaviour
     public GameObject ItemTigger;
     public SynergieManager synergieManager;
     public AudioSource audioSource;
+    public SoundScript audio;
     void Awake()
     {
         instance = this;
     }
     void Start()
     {
-        audioController = SoundScript.instance;
         enemys.AddRange(Resources.LoadAll<GameObject>("Prefabs/enemys"));
-        GenEnemies();
-        
-        SoundScript.instance.PlayMusic(true);
+        audioSource = GetComponent<AudioSource>();
+        audio.PlayMusic(true);
     }
 
     // Update is called once per frame
@@ -85,9 +93,8 @@ public class Gamecontroller : MonoBehaviour
                     if (hit.transform.parent.GetComponent<Heroe>() != null)
                     {
                         Utils.PlayAudio(SoundScript.instance.SellHeroEffectClip, audioSource, false);
-                        Destroy(hit.transform.parent.parent.gameObject);
-                        board.RemoveFromBoard(hit.transform.parent.GetComponent<Heroe>());
-                        player.AddGold(hit.transform.parent.GetComponent<Heroe>().stars * (int)hit.transform.parent.GetComponent<Heroe>().tier);
+                        player.AddGold(2);
+                        player.DestroyHero(hit.transform.parent.GetComponent<Heroe>());
                     }
                 }
             }
@@ -148,13 +155,51 @@ public class Gamecontroller : MonoBehaviour
     }
     public void ClosePauseMenu()
     {
-        Time.timeScale = Utils.BoolToInt(pauseMenu.gameObject.activeSelf);
-        pauseMenu.SetActive(!pauseMenu.gameObject.activeSelf);
-        shopContainer.gameObject.SetActive(!pauseMenu.gameObject.activeSelf);
+        Time.timeScale = Utils.BoolToInt(menuGoNoCanvas.gameObject.activeSelf);
+        menuGoNoCanvas.SetActive(!menuGoNoCanvas.gameObject.activeSelf);
+        shopContainer.gameObject.SetActive(!menuGoNoCanvas.gameObject.activeSelf);
     }
 
     public void ExitToMenu()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+    public void MainButton()
+    {
+
+        if (gamestate == GameState.Gameplaying)
+        {
+            Gamecontroller.instance.ClosePauseMenu();
+        }
+        else if (gamestate == GameState.Menu)
+        {
+            gamestate = GameState.Gameplaying;
+            menuGo.SetActive(false);
+            gameGo.SetActive(true);
+            menuGoNoCanvas.transform.SetParent(canvas.transform);
+            menuGoNoCanvas.GetComponent<RectTransform>().localPosition = Vector3.zero;
+            menuGoNoCanvas.GetComponent<RectTransform>().localScale = Vector3.one;
+            menuGoNoCanvas.gameObject.SetActive(false);
+            menuScript.mainButton.transform.GetChild(0).GetComponent<Text>().text = "Resume";
+            menuScript.exit.transform.GetChild(0).GetComponent<Text>().text = "BackToMenu";
+            GenEnemies();
+        }
+    }
+    public void QuitButton()
+    {
+        if (gamestate == GameState.Gameplaying)
+        {
+            menuGo.SetActive(true);
+            gameGo.SetActive(false);
+            menuGoNoCanvas.transform.SetParent(menuScript.gameObject.transform);
+            menuGoNoCanvas.GetComponent<RectTransform>().localPosition = Vector3.zero;
+            gamestate = GameState.Menu;
+
+        }
+        else if (gamestate == GameState.Menu)
+        {
+            Debug.Log("QUIT!");
+            Application.Quit();
+        }
     }
 }

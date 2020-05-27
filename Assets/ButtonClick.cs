@@ -7,6 +7,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Button))]
 public class ButtonClick : MonoBehaviour
 {
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,4 +25,5 @@ public class ButtonClick : MonoBehaviour
     {
         Utils.PlayAudio(SoundScript.instance.HitButtonEffectClip, SoundScript.instance.effect, false);
     }
+
 }

@@ -7,9 +7,6 @@ using UnityEngine.UI;
 public class OptionsMenu : MonoBehaviour
 {
     [SerializeField]
-    AudioMixer audioMixer;
-
-    [SerializeField]
     Dropdown resolutionDropdown;
     Resolution[] resolutions;
 
@@ -39,10 +36,6 @@ public class OptionsMenu : MonoBehaviour
         resolutionDropdown.RefreshShownValue();
     }
 
-    public void SetVolume(float volume)
-    {
-        audioMixer.SetFloat("mainVolume", volume);
-    }
 
     public void SetResolution(int resolutionIndex)
     {

@@ -81,4 +81,10 @@ public class Player : MonoBehaviour
         gold += extra;
         Gamecontroller.instance.hud.UpdateText();
     }
+    public void DestroyHero(Heroe heroe)
+    {
+        heroes.Remove(heroe);
+        Gamecontroller.instance.board.RemoveFromBoard(heroe);
+        Destroy(heroe.transform.parent.gameObject);
+    }
 }

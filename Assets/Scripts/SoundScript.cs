@@ -29,8 +29,9 @@ public class SoundScript : MonoBehaviour
     public AudioSource music;
     public AudioSource effect;
     public AudioSource ui;
+    public AudioSource game;
 
-    void Start()
+    void Awake()
     {
         instance = this;
         AmbientalMusicClips.AddRange(Resources.LoadAll<AudioClip>("Audios/Ambiental/Music"));
@@ -41,6 +42,7 @@ public class SoundScript : MonoBehaviour
         SellHeroEffectClip = Resources.Load<AudioClip>("Audios/Effects/Game/SellHero");
         BuyHeroEffectClip = Resources.Load<AudioClip>("Audios/Effects/Game/BuyHero");
         DropHeroEffectClip = Resources.Load<AudioClip>("Audios/Effects/Game/DropHero");
+        SoundScript.instance.PlayMusic(true);
     }
 
     public void SetVolumeMaster(float volume)
@@ -73,7 +75,7 @@ public class SoundScript : MonoBehaviour
     }
     public void PlayMusic(bool state)
     {
-        music.clip = AmbientalMusicClips[Random.Range(0, AmbientalEffectsClips.Count)];
+        music.clip = AmbientalMusicClips[Random.Range(0, AmbientalMusicClips.Count)];
         music.Play();
         if (!state)
             music.Stop();

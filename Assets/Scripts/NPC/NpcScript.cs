@@ -40,9 +40,12 @@ public class NpcScript : MonoBehaviour
         anim = mesh.transform.Find("Prefab").GetComponent<Animator>();
         name = gameObject.name;
         audioSource = GetComponent<AudioSource>();
-        
-        dieClip = Resources.Load<AudioClip>("Audio/Npc/"+Utils.GetFirstChars(GetType().ToString(),5) +"/"+gameObject.name+ "/"+gameObject.name+"_die");
-        hitClip = Resources.Load<AudioClip>("Audio/Npc/" + Utils.GetFirstChars(GetType().ToString(),5) +"/"+gameObject.name+ "/"+gameObject.name+"_hit");
+        string path = "Audios/Npc/" + Utils.GetFirstChars(GetType().ToString(), 5) + "/" + gameObject.name + "/" + gameObject.name + "_die";
+        print(path);
+        dieClip = Resources.Load<AudioClip>(path);
+        path = "Audios/Npc/" + Utils.GetFirstChars(GetType().ToString(), 5) + "/" + gameObject.name + "/" + gameObject.name + "_hit";
+        print(path);
+        hitClip = Resources.Load<AudioClip>(path);
 
     }
     public void Update()
@@ -144,7 +147,8 @@ public class NpcScript : MonoBehaviour
             {
                 if (clip.name == "Die")
                 {
-                    target.Invoke("die", clip.length);
+                    Utils.PlayAudio(target.dieClip, target.audioSource, false);
+                    target.Invoke("Die", clip.length);
                 }
             }
             if (target.GetComponent<EnemyScript>() != null)

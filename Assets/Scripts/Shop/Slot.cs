@@ -12,7 +12,7 @@ public class Slot : MonoBehaviour
     public Text cost;
     Bench bench;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         name = transform.Find("HeroText").GetComponent<Text>();
         cost = transform.Find("Cost").GetComponent<Text>();
@@ -36,6 +36,7 @@ public class Slot : MonoBehaviour
     {
         if (Gamecontroller.instance.player.HaveMoney((int)currentHero.transform.GetChild(0).GetComponent<Heroe>().tier + 1))
         {
+            Utils.PlayAudio(Gamecontroller.instance.audio.BuyHeroEffectClip, Gamecontroller.instance.audio.game,false);
             Tile tempTile = bench.GetEmptyTile();
             Gamecontroller.instance.player.AddGold(-(int)currentHero.transform.GetChild(0).GetComponent<Heroe>().tier + 1);
             GameObject hero = Instantiate(currentHero, tempTile.transform);
